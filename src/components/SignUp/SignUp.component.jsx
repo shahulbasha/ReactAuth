@@ -1,35 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from "react";
+import { Redirect } from "react-router-dom";
 import "./Signup.styles.css";
 import { useForm } from "react-hook-form";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import authAxios from "./../../util/util";
+import { AuthContext } from "../../contexts/AuthContext";
 const SignUp = () => {
-    const [user,setUser]=useState({});
-    const { register, handleSubmit } = useForm();
-    const onSubmit = async (data)=>{
-        console.log(data);
-        const res= await authAxios.post("signup",data);
-        console.log(res.data);
-        console.log(res.headers.token);
-    }
+  const [redirectOnLogin, setRedirectOnLogin] = useState(false);
+  const { register, handleSubmit } = useForm();
+  const authContext = useContext(AuthContext);
+  const onSubmit = async (data) => {
+    const res = await authAxios.post("signup", data);
+    console.log(res);
+    const token = res.headers.token;
+    const userInfo = res.data;
+    authContext.setAuthState({
+      token,
+      userInfo,
+      expiresAt: null,
+    });
+    setRedirectOnLogin(true);
+  };
 
-    return <div>
-     <h2>Sign Up to create and Account!</h2>
-        <Link to="/">Login Instead?</Link>
-        <form onSubmit={handleSubmit(onSubmit)}>
+  if (redirectOnLogin) {
+    return <Redirect to="/dashboard" />;
+  }
+  return (
+    <div>
+      <h2>Sign Up to create and Account!</h2>
+      <Link to="/">Login Instead?</Link>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>
-        <input name ="email" type="text" ref={register}/>
+        <input name="email" type="text" ref={register} />
         <label>FirstName</label>
         <input name="firstName" type="text" ref={register} />
         <label>LastName</label>
-        <input name="lastName" type="text" ref={register}/>
+        <input name="lastName" type="text" ref={register} />
         <label>Password</label>
-        <input name="password" type="password" ref={register}/>
+        <input name="password" type="password" ref={register} />
         <label>Confirm Password</label>
-        <input name="confirmpassword" type="password" ref={register}/>
+        <input name="confirmpassword" type="password" ref={register} />
         <button>SignUp</button>
-        </form>
+      </form>
     </div>
-}
+  );
+};
 
 export default SignUp;
