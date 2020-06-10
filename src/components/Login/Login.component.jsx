@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import authAxios from "./../../util/util";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Redirect } from "react-router-dom";
+
 const Login = () => {
   const [redirectOnLogin, setRedirectOnLogin] = useState(false);
   const { register, handleSubmit } = useForm();
   const authContext = useContext(AuthContext);
+
   const onSubmit = async (data) => {
     const res = await authAxios.post("login", data);
     console.log(res);

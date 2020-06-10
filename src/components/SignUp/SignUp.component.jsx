@@ -9,6 +9,7 @@ const SignUp = () => {
   const [redirectOnLogin, setRedirectOnLogin] = useState(false);
   const { register, handleSubmit } = useForm();
   const authContext = useContext(AuthContext);
+
   const onSubmit = async (data) => {
     const res = await authAxios.post("signup", data);
     console.log(res);
